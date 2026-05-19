@@ -6,34 +6,34 @@
 
 const USERS = [
   {
-    username: 'siswa1',
-    password: 'siswa123',
+    username: 'Kanaya',
+    password: 'Kanaya123',
     role:     'siswa',
-    nama:     'Siswa 1'
+    nama:     'Kanaya'
   },
   {
-    username: 'siswa2',
-    password: 'siswa234',
+    username: 'Jorrel',
+    password: 'Jorrel123',
     role:     'siswa',
-    nama:     'Siswa 2'
+    nama:     'Jorrel'
   },
   {
-    username: 'siswa3',
-    password: 'siswa345',
+    username: 'Satrio',
+    password: 'Satrio123',
     role:     'siswa',
-    nama:     'Siswa 3'
+    nama:     'Satrio'
   },
   {
-    username: 'siswa4',
-    password: 'siswa456',
+    username: 'Keenan',
+    password: 'Keenan123',
     role:     'siswa',
-    nama:     'Siswa 4'
+    nama:     'Keenan'
   },
   {
-    username: 'siswa5',
-    password: 'siswa567',
+    username: 'Arjuna',
+    password: 'Arjuna123',
     role:     'siswa',
-    nama:     'Siswa 5'
+    nama:     'Arjuna'
   },
   {
     username: 'tentor1',
