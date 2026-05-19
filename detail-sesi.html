@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Sesi — OSN Academy</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+
+    /* ── Hero sesi ── */
+    .sesi-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1a4a7a 100%);
+      padding: 40px 48px 36px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sesi-hero::after {
+      content: '📋';
+      position: absolute;
+      right: 48px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .sesi-hero .hero-inner { position: relative; z-index: 1; }
+
+    .sesi-hero .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: var(--transition);
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      padding: 0;
+    }
+
+    .sesi-hero .back-link:hover { color: var(--white); }
+
+    .sesi-hero h2 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+
+    .sesi-hero .hero-meta {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 28px;
+    }
+
+    /* Stat row di hero */
+    .hero-stats {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hs-item {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      text-align: center;
+      min-width: 90px;
+    }
+
+    .hs-item .hs-num {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .hs-item .hs-num.skor     { color: var(--gold); }
+    .hs-item .hs-num.benar    { color: #6ee7b7; }
+    .hs-item .hs-num.salah    { color: #fca5a5; }
+    .hs-item .hs-num.durasi   { color: var(--gold-light); font-size: 20px; }
+
+    .hs-item .hs-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 5px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Konten detail ── */
+    .detail-wrap {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 36px 40px 80px;
+    }
+
+    /* ── Filter & header ── */
+    .detail-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .detail-toolbar h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: var(--navy);
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-tab {
+      background: var(--gray-100);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: var(--font-body);
+    }
+
+    .filter-tab.active {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .filter-tab:hover:not(.active) { background: var(--gray-200); }
+
+    /* ── Item soal detail ── */
+    #soal-detail-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    /* Reset semua pseudo-element yang mungkin terbawa dari style global */
+    #soal-detail-list *::before,
+    #soal-detail-list *::after {
+      display: none !important;
+    }
+
+    .soal-detail-item {
+      background: var(--white);
+      border: 1px solid var(--border) !important;
+      border-radius: var(--radius-xl) !important;
+      margin-bottom: 16px !important;
+      overflow: hidden;
+      position: relative;
+      display: block !important;
+      width: 100%;
+      float: none;
+      clear: both;
+    }
+
+    /* Restore border-left warna status */
+    .soal-detail-item.benar  { border-left: 4px solid var(--success) !important; }
+    .soal-detail-item.salah  { border-left: 4px solid var(--danger)  !important; }
+    .soal-detail-item.kosong { border-left: 4px solid var(--warning) !important; }
+
+    /* Restore pseudo-element yang dibutuhkan di dalam item */
+    .sdi-header::before,
+    .sdi-header::after,
+    .sdi-body::before,
+    .sdi-body::after,
+    .sdi-opt::before,
+    .sdi-opt::after,
+    .jwb-badge::before,
+    .jwb-badge::after {
+      display: none !important;
+    }
+
+    /* Header item */
+    .sdi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 22px;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .sdi-header:hover { background: rgba(15,31,61,0.02); }
+
+    .sdi-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sdi-num {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+
+    .benar  .sdi-num { background: var(--success-bg); color: var(--success); }
+    .salah  .sdi-num { background: var(--danger-bg);  color: var(--danger); }
+    .kosong .sdi-num { background: var(--warning-bg); color: var(--warning); }
+
+    .sdi-preview {
+      font-size: 14px;
+      color: var(--gray-800);
+      max-width: 460px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sdi-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    /* Badge jawaban */
+    .jwb-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+    }
+
+    .jwb-badge.benar   { background: var(--success-bg); color: var(--success); }
+    .jwb-badge.salah   { background: var(--danger-bg);  color: var(--danger); }
+    .jwb-badge.kosong  { background: var(--warning-bg); color: var(--warning); }
+
+    .sdi-toggle {
+      font-size: 12px;
+      color: var(--gray-400);
+      transition: transform 0.25s;
+    }
+    .sdi-toggle.open { transform: rotate(180deg); }
+
+    /* Body item */
+    .sdi-body {
+      display: none !important;
+      padding: 0 22px 22px;
+      border-top: 1px solid var(--border);
+    }
+    .sdi-body.open { display: block !important; }
+
+    .sdi-soal-text {
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--ink);
+      padding: 18px 0 14px;
+    }
+
+    /* Badge level & format */
+    .sdi-meta-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    /* Opsi jawaban */
+    .sdi-options {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    .sdi-opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.5;
+      border: 1.5px solid transparent;
+    }
+
+    .sdi-opt.normal      { background: var(--gray-100); color: var(--gray-600); }
+    .sdi-opt.kunci       { background: var(--success-bg); border-color: var(--success); color: var(--ink); }
+    .sdi-opt.salah-pilih { background: var(--danger-bg);  border-color: var(--danger);  color: var(--ink); }
+
+    .sdi-opt .sok {
+      width: 26px; height: 26px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+
+    .sdi-opt.normal .sok      { background: var(--navy);    color: var(--white); }
+    .sdi-opt.kunci .sok       { background: var(--success); color: var(--white); }
+    .sdi-opt.salah-pilih .sok { background: var(--danger);  color: var(--white); }
+
+    .sdi-opt .soi { margin-left: auto; flex-shrink: 0; font-size: 15px; }
+
+    /* Keterangan pembahasan */
+    .sdi-pembahasan {
+      background: var(--teal-pale);
+      border-left: 4px solid var(--teal);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 14px 18px;
+    }
+
+    .sdi-pembahasan .sdp-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+
+    .sdi-pembahasan p {
+      font-size: 13px;
+      color: var(--gray-800);
+      line-height: 1.7;
+    }
+
+    /* Jawaban info row */
+    .jwb-info-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .jwb-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    .jwb-chip.siswa  { background: var(--danger-bg);  color: var(--danger); }
+    .jwb-chip.kunci  { background: var(--success-bg); color: var(--success); }
+    .jwb-chip.benar  { background: var(--success-bg); color: var(--success); }
+    .jwb-chip.kosong { background: var(--warning-bg); color: var(--warning); }
+
+    /* Fix: pastikan item tidak ter-affect animasi opacity dari style global */
+    #soal-detail-list .soal-detail-item {
+      opacity: 1 !important;
+      animation: none !important;
+      transform: none !important;
+    }
+
+    /* Reset list global yang mengganggu card */
+    #soal-detail-list li::before {
+      display: none !important;
+      content: none !important;
+    }
+
+    #soal-detail-list li {
+      border-bottom: none !important;
+      padding: 0 !important;
+    }
+
+    /* ── Rekap bawah ── */
+    .rekap-wrap {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px 32px;
+      margin-bottom: 28px;
+    }
+
+    .rekap-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      color: var(--navy);
+      margin-bottom: 18px;
+    }
+
+    .rekap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .rekap-item {
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      text-align: center;
+    }
+
+    .rekap-item .ri-val {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .rekap-item .ri-label {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .sesi-hero { padding: 28px 20px; }
+      .detail-wrap { padding: 24px 16px 60px; }
+      .sdi-preview { max-width: 180px; }
+      .hero-stats { gap: 8px; }
+      .hs-item { min-width: 72px; padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon">🔬</div>
+      <h1>OSN <span>Academy</span></h1>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <span class="user-name" id="topbar-nama">—</span>
+        <span class="user-role" id="topbar-role">Tentor</span>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Keluar</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="sesi-hero">
+    <div class="hero-inner">
+      <button class="back-link" onclick="kembali()">← Kembali ke Dashboard</button>
+      <h2 id="hero-judul">Detail Sesi Latihan</h2>
+      <div class="hero-meta" id="hero-meta">—</div>
+      <div class="hero-stats">
+        <div class="hs-item">
+          <div class="hs-num skor"   id="hs-skor">—</div>
+          <div class="hs-label">Skor</div>
+        </div>
+        <div class="hs-item">
+          <div class="hs-num benar"  id="hs-benar">—</div>
+          <div class="hs-label">Benar</div>
+        </div>
+        <div class="hs-item">
+          <div class="hs-num salah"  id="hs-salah">—</div>
+          <div class="hs-label">Salah</div>
+        </div>
+        <div class="hs-item">
+          <div class="hs-num durasi" id="hs-durasi">—</div>
+          <div class="hs-label">Durasi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Konten detail -->
+  <div class="detail-wrap">
+
+    <!-- Toolbar filter -->
+    <div class="detail-toolbar">
+      <h3>📝 Detail Per Soal</h3>
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterSoal('semua', this)">Semua</button>
+        <button class="filter-tab" onclick="filterSoal('salah',  this)">Salah</button>
+        <button class="filter-tab" onclick="filterSoal('benar',  this)">Benar</button>
+        <button class="filter-tab" onclick="filterSoal('kosong', this)">Tidak Dijawab</button>
+      </div>
+    </div>
+
+    <!-- List soal -->
+    <div id="soal-detail-list">
+      <!-- JS -->
+    </div>
+
+  </div>
+
+  <script src="assets/app.js"></script>
+  <script>
+    let sesiData = null;
+
+    /* ════════════════════════════════════════════════
+       INIT
+    ════════════════════════════════════════════════ */
+    (function init() {
+      const session = Auth.requireLogin('tentor');
+      if (!session) return;
+      Utils.isiTopbar(session);
+
+      const params = new URLSearchParams(window.location.search);
+      const id     = params.get('id') || localStorage.getItem('osn_detail_sesi_id');
+
+      if (!id) {
+        window.location.href = 'dashboard-tentor.html';
+        return;
+      }
+
+      sesiData = Riwayat.getById(id);
+      if (!sesiData) {
+        alert('Data sesi tidak ditemukan.');
+        window.location.href = 'dashboard-tentor.html';
+        return;
+      }
+
+      renderHero();
+      renderSoalList('semua');
+    })();
+
+    /* ════════════════════════════════════════════════
+       HERO
+    ════════════════════════════════════════════════ */
+    function renderHero() {
+      const s = sesiData;
+      document.getElementById('hero-judul').textContent =
+        s.paketLabel;
+      document.getElementById('hero-meta').textContent =
+        Utils.formatTanggal(s.tanggal);
+      document.getElementById('hs-skor').textContent   = s.skor;
+      document.getElementById('hs-benar').textContent  = s.benar;
+      document.getElementById('hs-salah').textContent  = s.salah;
+      document.getElementById('hs-durasi').textContent =
+        Utils.formatDurasi(s.durasi, 'text');
+    }
+
+    /* ════════════════════════════════════════════════
+       FILTER
+    ════════════════════════════════════════════════ */
+    function filterSoal(mode, el) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      renderSoalList(mode);
+    }
+
+    /* ════════════════════════════════════════════════
+       RENDER SOAL LIST
+    ════════════════════════════════════════════════ */
+    function renderSoalList(filter) {
+      const container = document.getElementById('soal-detail-list');
+      let detail = sesiData.detail;
+
+      if (filter === 'benar')  detail = detail.filter(d =>  d.benar && d.jawaban);
+      if (filter === 'salah')  detail = detail.filter(d => !d.benar && d.jawaban);
+      if (filter === 'kosong') detail = detail.filter(d => !d.jawaban);
+
+      if (!detail.length) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:56px;color:var(--gray-400)">
+            <div style="font-size:40px;margin-bottom:12px">
+              ${filter === 'salah' ? '🎉' : '📭'}
+            </div>
+            <p style="font-size:14px">
+              ${filter === 'salah'
+                ? 'Tidak ada jawaban salah pada sesi ini!'
+                : filter === 'kosong'
+                  ? 'Semua soal sudah dijawab.'
+                  : 'Tidak ada data.'}
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = detail.map(d => renderItem(d)).join('');
+    }
+
+    /* ════════════════════════════════════════════════
+       RENDER ITEM
+    ════════════════════════════════════════════════ */
+    function renderItem(d) {
+      const statusCls = !d.jawaban ? 'kosong' : d.benar ? 'benar' : 'salah';
+      const soalBersih = d.soalText.replace(/<[^>]+>/g, '');
+
+      // Badge jawaban
+      let jwbBadgeHtml = '';
+      if (!d.jawaban) {
+        jwbBadgeHtml = `<span class="jwb-badge kosong">⚠ Tidak Dijawab</span>`;
+      } else if (d.benar) {
+        jwbBadgeHtml = `<span class="jwb-badge benar">✓ ${d.jawaban} — Benar</span>`;
+      } else {
+        jwbBadgeHtml = `<span class="jwb-badge salah">✗ ${d.jawaban} → ${d.kunci}</span>`;
+      }
+
+      let html = `
+        <div class="soal-detail-item ${statusCls}" id="sdi-${d.no}">
+          <div class="sdi-header" onclick="toggleSdi(${d.no})">
+            <div class="sdi-header-left">
+              <div class="sdi-num">${d.no}</div>
+              <div class="sdi-preview">${soalBersih}</div>
+            </div>
+            <div class="sdi-header-right">
+              ${jwbBadgeHtml}
+              <span class="sdi-toggle" id="sdi-toggle-${d.no}">▼</span>
+            </div>
+          </div>
+          <div class="sdi-body" id="sdi-body-${d.no}">
+      `;
+
+      // Meta: level & format
+      html += `
+        <div style="padding-top:16px;">
+          <div class="sdi-meta-row">
+            <span class="badge ${(d.level||'').toLowerCase()}">${d.level || '—'}</span>
+            <span class="badge navy">${d.format || '—'}</span>
+          </div>
+      `;
+
+      // Teks soal
+      html += `<div class="sdi-soal-text">${d.soalText}</div>`;
+
+      // Info jawaban siswa vs kunci
+      if (!d.jawaban) {
+        html += `
+          <div style="background:var(--warning-bg);border:1px solid rgba(183,119,13,0.2);border-radius:var(--radius-md);padding:10px 14px;font-size:13px;color:var(--warning);margin-bottom:14px">
+            ⚠️ Soal ini tidak dijawab oleh siswa. Jawaban benar: <strong>${d.kunci}</strong>
+          </div>
+        `;
+      } else {
+        html += '<div class="jwb-info-row">';
+        if (!d.benar) {
+          html += `
+            <span class="jwb-chip siswa">✗ Dijawab: ${d.jawaban}</span>
+            <span class="jwb-chip kunci">✓ Kunci: ${d.kunci}</span>
+          `;
+        } else {
+          html += `<span class="jwb-chip benar">✓ Benar: ${d.jawaban}</span>`;
+        }
+        html += '</div>';
+      }
+
+      // Opsi
+      html += '<div class="sdi-options">';
+      (d.opsi || []).forEach(o => {
+        let cls  = 'normal';
+        let icon = '';
+        if (o.key === d.kunci) {
+          cls  = 'kunci';
+          icon = '✓';
+        } else if (o.key === d.jawaban && !d.benar) {
+          cls  = 'salah-pilih';
+          icon = '✗';
+        }
+        html += `
+          <div class="sdi-opt ${cls}">
+            <div class="sok">${o.key}</div>
+            <div style="flex:1;line-height:1.5">${o.teks}</div>
+            ${icon ? `<div class="soi">${icon}</div>` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+
+      // Pembahasan
+      html += `
+        <div class="sdi-pembahasan">
+          ${d.konsep ? `
+            <div class="sdp-title">📚 Konsep Materi</div>
+            <p style="margin-bottom:12px">${d.konsep}</p>
+            <div class="sdp-title" style="margin-top:12px">💡 Pembahasan</div>
+          ` : `<div class="sdp-title">💡 Pembahasan</div>`}
+          <p>${d.pembahasan}</p>
+        </div>
+      `;
+
+      html += '</div></div>'; // tutup sdi-body & item
+      return html;
+    }
+
+    /* ════════════════════════════════════════════════
+       TOGGLE ACCORDION
+    ════════════════════════════════════════════════ */
+    function toggleSdi(no) {
+      const body   = document.getElementById('sdi-body-' + no);
+      const toggle = document.getElementById('sdi-toggle-' + no);
+      body.classList.toggle('open');
+      toggle.classList.toggle('open');
+    }
+
+    /* ════════════════════════════════════════════════
+       KEMBALI
+    ════════════════════════════════════════════════ */
+    function kembali() {
+      window.location.href = 'dashboard-tentor.html';
+    }
+  </script>
+
+</body>
+</html>

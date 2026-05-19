@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — OSN Academy</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    /* ── Greeting banner ── */
+    .greeting-banner {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1a4a7a 100%);
+      border-radius: var(--radius-xl);
+      padding: 36px 40px;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .greeting-banner::after {
+      content: '🗺️';
+      position: absolute;
+      right: 36px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .greeting-banner .greet-left h2 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .greeting-banner .greet-left h2 span { color: var(--gold); }
+
+    .greeting-banner .greet-left p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .greeting-banner .greet-stats {
+      display: flex;
+      gap: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .greet-stat {
+      text-align: center;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      min-width: 90px;
+    }
+
+    .greet-stat .gs-num {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .greet-stat .gs-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 5px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Section title ── */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title .stitle-icon {
+      width: 32px; height: 32px;
+      background: var(--gold-pale);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    /* ── Try Out card ── */
+    .tryout-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    .tryout-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tryout-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--teal-light));
+    }
+
+    .tryout-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--teal-light);
+    }
+
+    .tryout-card.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .tryout-card .tc-icon {
+      font-size: 36px;
+      margin-bottom: 14px;
+    }
+
+    .tryout-card h3 {
+      font-family: var(--font-display);
+      font-size: 19px;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .tryout-card p {
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .tryout-card .tc-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ── Paket grid ── */
+    .paket-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .paket-card {
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      cursor: pointer;
+      transition: var(--transition);
+      border: 2px solid transparent;
+      position: relative;
+    }
+
+    .paket-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Paket 1 — biru muda */
+    .paket-card.paket1 {
+      background: linear-gradient(135deg, #eef4ff, #d6e6ff);
+      border-color: #a8c8f0;
+    }
+    .paket-card.paket1:hover { border-color: #3b82f6; }
+    .paket1 .pc-badge { color: #2563eb; }
+
+    /* Paket 2 — teal */
+    .paket-card.paket2 {
+      background: linear-gradient(135deg, #edf7f6, #c8eae7);
+      border-color: #8ecec9;
+    }
+    .paket-card.paket2:hover { border-color: var(--teal); }
+    .paket2 .pc-badge { color: var(--teal); }
+
+    /* Paket 3 — ungu */
+    .paket-card.paket3 {
+      background: linear-gradient(135deg, #f5f0ff, #e8d8ff);
+      border-color: #c4a8e8;
+    }
+    .paket-card.paket3:hover { border-color: #7c3aed; }
+    .paket3 .pc-badge { color: #7c3aed; }
+
+    .paket-card .pc-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .paket-card h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .paket-card p {
+      font-size: 12px;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .paket-card .pc-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .paket-card .pc-meta span {
+      font-size: 12px;
+      color: var(--gray-600);
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Skor terakhir di paket card */
+    .paket-card .pc-last-score {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 8px;
+      padding: 6px 10px;
+      text-align: center;
+    }
+
+    .pc-last-score .pls-num {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .pc-last-score .pls-label {
+      font-size: 10px;
+      color: var(--gray-400);
+      margin-top: 2px;
+    }
+
+    /* ── Riwayat tabel ── */
+    .riwayat-section { margin-bottom: 48px; }
+
+    .riwayat-empty {
+      background: var(--white);
+      border: 1px dashed var(--border-mid);
+      border-radius: var(--radius-lg);
+      padding: 48px 32px;
+      text-align: center;
+      color: var(--gray-400);
+    }
+
+    .riwayat-empty .re-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .riwayat-empty p {
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .skor-chip {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      min-width: 48px;
+      text-align: center;
+    }
+
+    .skor-chip.tinggi { background: var(--success-bg); color: var(--success); }
+    .skor-chip.sedang { background: var(--warning-bg); color: var(--warning); }
+    .skor-chip.rendah { background: var(--danger-bg);  color: var(--danger); }
+
+    .btn-detail-riwayat {
+      background: none;
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-family: var(--font-body);
+      color: var(--navy-mid);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .btn-detail-riwayat:hover {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    /* ── Breadcrumb try out ── */
+    .tryout-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--gray-400);
+    }
+
+    .tryout-breadcrumb button {
+      background: none;
+      border: none;
+      color: var(--teal);
+      font-family: var(--font-body);
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 600;
+      padding: 0;
+    }
+
+    .tryout-breadcrumb button:hover { text-decoration: underline; }
+    .tryout-breadcrumb .sep { color: var(--gray-200); }
+    .tryout-breadcrumb span { color: var(--gray-600); font-weight: 500; }
+
+    @media (max-width: 768px) {
+      .greeting-banner { flex-direction: column; gap: 24px; align-items: flex-start; }
+      .greeting-banner::after { display: none; }
+      .greet-stats { gap: 12px; width: 100%; }
+      .greet-stat { flex: 1; min-width: unset; }
+      .paket-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon">🗺️</div>
+      <h1>OSN <span>Academy</span></h1>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <span class="user-name" id="topbar-nama">—</span>
+        <span class="user-role" id="topbar-role">Siswa</span>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Keluar</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main-wrap" id="main-wrap">
+
+    <!-- Greeting banner -->
+    <div class="greeting-banner anim-fade-up">
+      <div class="greet-left">
+        <h2>Selamat datang, <span id="greet-nama">—</span>! 👋</h2>
+        <p>Pilih kelompok try out dan mulai berlatih hari ini.</p>
+      </div>
+      <div class="greet-stats">
+        <div class="greet-stat">
+          <div class="gs-num" id="stat-total-sesi">0</div>
+          <div class="gs-label">Total Sesi</div>
+        </div>
+        <div class="greet-stat">
+          <div class="gs-num" id="stat-rata">—</div>
+          <div class="gs-label">Rata-rata</div>
+        </div>
+        <div class="greet-stat">
+          <div class="gs-num" id="stat-tertinggi">—</div>
+          <div class="gs-label">Tertinggi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAGIAN 1: Pilih Try Out (tampil default) -->
+    <div id="section-tryout">
+      <div class="section-title anim-fade-up anim-delay-1">
+        <div class="stitle-icon">📝</div>
+        Pilih Kelompok Try Out
+      </div>
+      <div class="tryout-grid anim-fade-up anim-delay-2" id="tryout-grid">
+        <!-- Di-render oleh JS -->
+      </div>
+    </div>
+
+    <!-- BAGIAN 2: Pilih Paket (tampil saat try out dipilih) -->
+    <div id="section-paket" style="display:none;">
+      <div class="tryout-breadcrumb">
+        <button onclick="kembaliKeTryOut()">← Try Out</button>
+        <span class="sep">/</span>
+        <span id="breadcrumb-tryout">—</span>
+      </div>
+      <div class="section-title">
+        <div class="stitle-icon">🎯</div>
+        Pilih Paket Soal
+      </div>
+      <div class="paket-grid" id="paket-grid">
+        <!-- Di-render oleh JS -->
+      </div>
+    </div>
+
+    <!-- Riwayat latihan -->
+    <div class="riwayat-section anim-fade-up anim-delay-3">
+      <div class="section-title">
+        <div class="stitle-icon">📋</div>
+        Riwayat Latihan
+      </div>
+      <div id="riwayat-container">
+        <!-- Di-render oleh JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <script src="assets/app.js"></script>
+  <script>
+    // ── Data Try Out & Paket ───────────────────────────────
+    const TRYOUT_DATA = [
+      {
+        id:    'tryout-1',
+        label: 'Try Out #1',
+        icon:  '📝',
+        desc:  'Soal pilihan ganda IPS mencakup Geografi, Sosial, Ekonomi, dan Sejarah. Terdiri dari 3 paket dengan masing-masing 10 soal.',
+        paket: [
+          {
+            id:    'to1-paket1',
+            label: 'Try Out #1 — Paket 1',
+            level: 'paket1',
+            soal:  10,
+            waktu: 30,
+            desc:  'Paket 1 dari kelompok Try Out #1.',
+            file:  'data/soal-to1-paket1.js'
+          },
+          {
+            id:    'to1-paket2',
+            label: 'Try Out #1 — Paket 2',
+            level: 'paket2',
+            soal:  10,
+            waktu: 30,
+            desc:  'Paket 2 dari kelompok Try Out #1.',
+            file:  'data/soal-to1-paket2.js'
+          },
+          {
+            id:    'to1-paket3',
+            label: 'Try Out #1 — Paket 3',
+            level: 'paket3',
+            soal:  10,
+            waktu: 30,
+            desc:  'Paket 3 dari kelompok Try Out #1.',
+            file:  'data/soal-to1-paket3.js'
+          }
+        ]
+      },
+      {
+        id:       'tryout-2',
+        label:    'Try Out #2',
+        icon:     '📝',
+        desc:     'Soal pilihan ganda IPS — segera hadir.',
+        disabled: true,
+        paket:    []
+      },
+      {
+        id:       'tryout-3',
+        label:    'Try Out #3',
+        icon:     '📝',
+        desc:     'Soal pilihan ganda IPS — segera hadir.',
+        disabled: true,
+        paket:    []
+      }
+    ];
+
+    let tryoutDipilih = null;
+
+    // ── Init ───────────────────────────────────────────────
+    (function init() {
+      const session = Auth.requireLogin('siswa');
+      if (!session) return;
+
+      Utils.isiTopbar(session);
+      document.getElementById('greet-nama').textContent = session.nama;
+
+      renderStatistik();
+      renderTryOut();
+      renderRiwayat();
+    })();
+
+    // ── Statistik banner ───────────────────────────────────
+    function renderStatistik() {
+      const riwayat = Riwayat.getAll();
+      const stat    = Utils.hitungStatistik(riwayat);
+
+      document.getElementById('stat-total-sesi').textContent =
+        stat ? stat.totalSesi : 0;
+      document.getElementById('stat-rata').textContent =
+        stat ? stat.rataRata : '—';
+      document.getElementById('stat-tertinggi').textContent =
+        stat ? stat.skorTinggi : '—';
+    }
+
+    // ── Render try out grid ────────────────────────────────
+    function renderTryOut() {
+      const grid = document.getElementById('tryout-grid');
+      grid.innerHTML = TRYOUT_DATA.map(t => `
+        <div class="tryout-card ${t.disabled ? 'disabled' : ''}"
+             onclick="${t.disabled ? '' : `pilihTryOut('${t.id}')`}">
+          <div class="tc-icon">${t.icon}</div>
+          <h3>${t.label}</h3>
+          <p>${t.desc}</p>
+          <div class="tc-footer">
+            <span class="badge ${t.disabled ? 'navy' : 'teal'}">
+              ${t.disabled ? 'Segera Hadir' : `${t.paket.length} Paket Soal`}
+            </span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── Pilih try out → tampilkan paket ───────────────────
+    function pilihTryOut(tryoutId) {
+      tryoutDipilih = TRYOUT_DATA.find(t => t.id === tryoutId);
+      if (!tryoutDipilih) return;
+
+      document.getElementById('section-tryout').style.display = 'none';
+      document.getElementById('section-paket').style.display  = 'block';
+      document.getElementById('breadcrumb-tryout').textContent = tryoutDipilih.label;
+
+      renderPaket(tryoutDipilih);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Kembali ke pilih try out ───────────────────────────
+    function kembaliKeTryOut() {
+      document.getElementById('section-paket').style.display  = 'none';
+      document.getElementById('section-tryout').style.display = 'block';
+      tryoutDipilih = null;
+    }
+
+    // ── Render paket grid ──────────────────────────────────
+    function renderPaket(tryout) {
+      const grid    = document.getElementById('paket-grid');
+      const riwayat = Riwayat.getAll();
+
+      grid.innerHTML = tryout.paket.map(p => {
+        const sesiPaket = riwayat.filter(s => s.paketId === p.id);
+        const lastSesi  = sesiPaket.length ? sesiPaket[sesiPaket.length - 1] : null;
+
+        const lastScoreHtml = lastSesi ? `
+          <div class="pc-last-score">
+            <div class="pls-num" style="color:${Utils.warnaSkor(lastSesi.skor)}">
+              ${lastSesi.skor}
+            </div>
+            <div class="pls-label">terakhir</div>
+          </div>
+        ` : '';
+
+        const nomorPaket = p.level.replace('paket', '');
+
+        return `
+          <div class="paket-card ${p.level}"
+               onclick="pilihPaket('${p.id}', '${p.label}', '${p.file}', '${tryout.label}')">
+            ${lastScoreHtml}
+            <div class="pc-badge">PAKET ${nomorPaket}</div>
+            <h3>Paket ${nomorPaket}</h3>
+            <p>${p.desc}</p>
+            <div class="pc-meta">
+              <span>📝 ${p.soal} soal</span>
+              <span>⏱ ${p.waktu} menit</span>
+              <span>📊 ${sesiPaket.length} kali dikerjakan</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ── Pilih paket → ke briefing ──────────────────────────
+    function pilihPaket(paketId, paketLabel, paketFile, tryoutLabel) {
+      PaketSession.simpan(paketId, paketLabel, tryoutLabel);
+      localStorage.setItem('osn_paket_file', paketFile);
+      window.location.href = 'briefing.html';
+    }
+
+    // ── Render riwayat latihan ─────────────────────────────
+    function renderRiwayat() {
+      const container = document.getElementById('riwayat-container');
+      const riwayat   = Riwayat.getAll().slice().reverse();
+
+      if (!riwayat.length) {
+        container.innerHTML = `
+          <div class="riwayat-empty">
+            <div class="re-icon">📭</div>
+            <p>Belum ada riwayat latihan.<br>Mulai kerjakan paket soal pertamamu!</p>
+          </div>
+        `;
+        return;
+      }
+
+      const tampil = riwayat.slice(0, 10);
+
+      container.innerHTML = `
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>Paket Soal</th>
+                <th>Skor</th>
+                <th>Benar / Salah</th>
+                <th>Durasi</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tampil.map(s => {
+                const chipClass = s.skor >= 80 ? 'tinggi' : s.skor >= 60 ? 'sedang' : 'rendah';
+                return `
+                  <tr>
+                    <td style="font-size:13px; color:var(--gray-600)">
+                      ${Utils.formatTanggal(s.tanggal)}
+                    </td>
+                    <td>
+                      <div style="font-weight:600; font-size:14px">${s.paketLabel}</div>
+                    </td>
+                    <td>
+                      <span class="skor-chip ${chipClass}">${s.skor}</span>
+                    </td>
+                    <td style="font-size:13px">
+                      <span style="color:var(--success); font-weight:600">${s.benar} benar</span>
+                      &nbsp;/&nbsp;
+                      <span style="color:var(--danger); font-weight:600">${s.salah} salah</span>
+                    </td>
+                    <td style="font-size:13px; font-family:var(--font-mono); color:var(--gray-600)">
+                      ${Utils.formatDurasi(s.durasi, 'text')}
+                    </td>
+                    <td>
+                      <button class="btn-detail-riwayat"
+                        onclick="lihatDetail('${s.id}')">
+                        Lihat Detail
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+        ${riwayat.length > 10 ? `
+          <p style="font-size:13px; color:var(--gray-400); margin-top:12px; text-align:center">
+            Menampilkan 10 sesi terbaru dari ${riwayat.length} total sesi.
+          </p>
+        ` : ''}
+      `;
+    }
+
+    // ── Lihat detail riwayat ───────────────────────────────
+    function lihatDetail(sesiId) {
+      localStorage.setItem('osn_detail_sesi_id', sesiId);
+      localStorage.setItem('osn_detail_from', 'siswa');
+      window.location.href = 'result.html?mode=riwayat&id=' + sesiId;
+    }
+  </script>
+
+</body>
+</html>

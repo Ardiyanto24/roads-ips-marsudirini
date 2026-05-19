@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hasil — OSN Academy</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+
+    /* ── Hero hasil ── */
+    .hasil-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1a4a7a 100%);
+      color: var(--white);
+      padding: 52px 48px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hasil-hero::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,160,32,0.12), transparent 65%);
+      top: -200px; right: -100px;
+      pointer-events: none;
+    }
+
+    .hasil-hero::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(26,127,116,0.10), transparent 65%);
+      bottom: -100px; left: -50px;
+      pointer-events: none;
+    }
+
+    .hasil-hero .hero-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hasil-hero .paket-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 24px;
+      letter-spacing: 0.3px;
+    }
+
+    .hasil-hero h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .hasil-hero .hero-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 36px;
+    }
+
+    /* Skor circle */
+    .score-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 36px;
+    }
+
+    .score-circle {
+      width: 156px;
+      height: 156px;
+      border-radius: 50%;
+      border: 4px solid var(--gold);
+      background: rgba(232,160,32,0.10);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 0 40px rgba(232,160,32,0.25);
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .score-circle .sc-num {
+      font-family: var(--font-display);
+      font-size: 56px;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .score-circle .sc-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .predikat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(232,160,32,0.15);
+      border: 1px solid rgba(232,160,32,0.3);
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gold-light);
+    }
+
+    /* Statistik row */
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius-md);
+      padding: 16px 24px;
+      min-width: 100px;
+    }
+
+    .stat-item .si-num {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-item .si-num.benar  { color: #6ee7b7; }
+    .stat-item .si-num.salah  { color: #fca5a5; }
+    .stat-item .si-num.durasi { color: var(--gold-light); }
+
+    .stat-item .si-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 6px;
+    }
+
+    /* ── Action buttons ── */
+    .hasil-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 32px 40px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: var(--radius-md);
+      padding: 12px 24px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+
+    .btn-action.primary {
+      background: var(--teal);
+      color: var(--white);
+    }
+    .btn-action.primary:hover {
+      background: var(--teal-light);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(26,127,116,0.3);
+    }
+
+    .btn-action.outline {
+      background: var(--white);
+      color: var(--navy);
+      border: 1.5px solid var(--border-mid);
+    }
+    .btn-action.outline:hover {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .btn-action.gold {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-action.gold:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── Kunci Jawaban ── */
+    .kunci-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 40px 80px;
+    }
+
+    .kunci-wrap.hidden { display: none; }
+
+    .kunci-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .kunci-header h3 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: var(--navy);
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-tab {
+      background: var(--gray-100);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: var(--font-body);
+    }
+
+    .filter-tab.active {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .filter-tab:hover:not(.active) { background: var(--gray-200); }
+
+    /* Item kunci */
+    .item-kunci {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      margin-bottom: 16px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .item-kunci.benar { border-left: 4px solid var(--success); }
+    .item-kunci.salah { border-left: 4px solid var(--danger); }
+
+    /* Header item */
+    .ip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      cursor: pointer;
+      user-select: none;
+      transition: var(--transition);
+    }
+
+    .ip-header:hover { background: rgba(15,31,61,0.02); }
+
+    .ip-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ip-nomor {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+
+    .benar .ip-nomor { background: var(--success-bg); color: var(--success); }
+    .salah .ip-nomor { background: var(--danger-bg);  color: var(--danger); }
+
+    .ip-soal-preview {
+      font-size: 14px;
+      color: var(--gray-800);
+      line-height: 1.4;
+      max-width: 500px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ip-header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .result-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .result-pill.benar { background: var(--success-bg); color: var(--success); }
+    .result-pill.salah { background: var(--danger-bg);  color: var(--danger); }
+
+    .ip-toggle {
+      font-size: 12px;
+      color: var(--gray-400);
+      transition: transform 0.25s;
+    }
+
+    .ip-toggle.open { transform: rotate(180deg); }
+
+    /* Body item (collapsible) */
+    .ip-body {
+      display: none !important;
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .ip-body.open { display: block !important; }
+
+    /* Teks soal di dalam accordion */
+    .pb-soal-text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--ink);
+      padding: 18px 0 14px;
+    }
+
+    /* Info jawaban */
+    .pb-jawaban-info {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .pb-jwb-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+    }
+
+    .pb-jwb-chip.kamu  { background: var(--danger-bg);  color: var(--danger); }
+    .pb-jwb-chip.kunci { background: var(--success-bg); color: var(--success); }
+    .pb-jwb-chip.benar { background: var(--success-bg); color: var(--success); }
+
+    /* Tidak dijawab */
+    .pb-tidak-dijawab {
+      background: var(--warning-bg);
+      border: 1px solid rgba(183,119,13,0.2);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--warning);
+      margin-bottom: 14px;
+    }
+
+    /* Opsi jawaban */
+    .pb-options {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .pb-opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.5;
+      border: 1.5px solid transparent;
+    }
+
+    .pb-opt.normal {
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    .pb-opt.kunci {
+      background: var(--success-bg);
+      border-color: var(--success);
+      color: var(--ink);
+    }
+
+    .pb-opt.salah-pilih {
+      background: var(--danger-bg);
+      border-color: var(--danger);
+      color: var(--ink);
+    }
+
+    .pb-opt .pok {
+      width: 26px; height: 26px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+
+    .pb-opt.normal .pok      { background: var(--navy);    color: var(--white); }
+    .pb-opt.kunci .pok       { background: var(--success); color: var(--white); }
+    .pb-opt.salah-pilih .pok { background: var(--danger);  color: var(--white); }
+
+    .pb-opt .poi {
+      margin-left: auto;
+      flex-shrink: 0;
+      font-size: 15px;
+    }
+
+    /* Fix animasi */
+    #kunci-list .item-kunci {
+      opacity: 1 !important;
+      animation: none !important;
+      transform: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .hasil-hero { padding: 36px 20px 32px; }
+      .stats-row { gap: 10px; }
+      .stat-item { padding: 12px 16px; min-width: 80px; }
+      .hasil-actions { padding: 20px; }
+      .kunci-wrap { padding: 24px 16px 60px; }
+      .ip-soal-preview { max-width: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon">🗺️</div>
+      <h1>OSN <span>Academy</span></h1>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <span class="user-name" id="topbar-nama">—</span>
+        <span class="user-role" id="topbar-role">Siswa</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero hasil -->
+  <div class="hasil-hero" id="hasil-hero">
+    <div class="hero-inner">
+      <div class="paket-chip" id="hero-paket-chip">—</div>
+      <h2 id="hero-judul">Try Out Selesai!</h2>
+      <p class="hero-sub" id="hero-sub">—</p>
+
+      <div class="score-wrap">
+        <div class="score-circle">
+          <div class="sc-num" id="hero-skor">0</div>
+          <div class="sc-label">SKOR</div>
+        </div>
+        <div class="predikat-badge" id="hero-predikat">—</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="si-num benar" id="stat-benar">0</div>
+          <div class="si-label">Jawaban Benar</div>
+        </div>
+        <div class="stat-item">
+          <div class="si-num salah" id="stat-salah">0</div>
+          <div class="si-label">Jawaban Salah</div>
+        </div>
+        <div class="stat-item">
+          <div class="si-num" id="stat-kosong" style="color:rgba(255,255,255,0.5)">0</div>
+          <div class="si-label">Tidak Dijawab</div>
+        </div>
+        <div class="stat-item">
+          <div class="si-num durasi" id="stat-durasi">—</div>
+          <div class="si-label">Waktu Dipakai</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="hasil-actions">
+    <button class="btn-action outline" onclick="keDashboard()">
+      ← Dashboard
+    </button>
+    <button class="btn-action gold" id="btn-toggle-kunci" onclick="toggleKunci()">
+      🔑 Lihat Kunci Jawaban
+    </button>
+    <button class="btn-action primary" onclick="ulangiPaket()">
+      🔄 Ulangi Paket Ini
+    </button>
+  </div>
+
+  <!-- Kunci Jawaban (tersembunyi awal) -->
+  <div class="kunci-wrap hidden" id="kunci-wrap">
+
+    <div class="kunci-header">
+      <h3>🔑 Kunci Jawaban</h3>
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterKunci('semua', this)">Semua</button>
+        <button class="filter-tab" onclick="filterKunci('salah', this)">Salah</button>
+        <button class="filter-tab" onclick="filterKunci('benar', this)">Benar</button>
+      </div>
+    </div>
+
+    <div id="kunci-list">
+      <!-- Di-render JS -->
+    </div>
+
+  </div>
+
+  <script src="assets/app.js"></script>
+  <script>
+    let sesiData    = null;
+    let filterAktif = 'semua';
+    let kunciTampil = false;
+
+    /* ════════════════════════════════════════════════
+       INIT
+    ════════════════════════════════════════════════ */
+    (function init() {
+      const session = Auth.requireLogin('siswa');
+      if (!session) return;
+      Utils.isiTopbar(session);
+
+      const params  = new URLSearchParams(window.location.search);
+      const modeRiw = params.get('mode') === 'riwayat';
+      const sesiId  = modeRiw
+        ? params.get('id')
+        : localStorage.getItem('osn_result_sesi_id');
+
+      if (!sesiId) {
+        window.location.href = 'dashboard-siswa.html';
+        return;
+      }
+
+      sesiData = Riwayat.getById(sesiId);
+      if (!sesiData) {
+        alert('Data sesi tidak ditemukan.');
+        window.location.href = 'dashboard-siswa.html';
+        return;
+      }
+
+      if (modeRiw) {
+        document.getElementById('hero-judul').textContent   = 'Detail Sesi Try Out';
+        document.getElementById('btn-toggle-kunci').textContent = '🔑 Lihat Kunci Jawaban';
+      }
+
+      renderHero();
+    })();
+
+    /* ════════════════════════════════════════════════
+       RENDER HERO
+    ════════════════════════════════════════════════ */
+    function renderHero() {
+      const s        = sesiData;
+      const predikat = Utils.predikat(s.skor);
+
+      document.getElementById('hero-paket-chip').textContent = s.paketLabel;
+      document.getElementById('hero-sub').textContent        = Utils.formatTanggal(s.tanggal);
+      document.getElementById('hero-skor').textContent       = s.skor;
+      document.getElementById('hero-predikat').textContent   = predikat.emoji + ' ' + predikat.label;
+
+      const kosong = s.detail.filter(d => !d.jawaban).length;
+      document.getElementById('stat-benar').textContent  = s.benar;
+      document.getElementById('stat-salah').textContent  = s.salah;
+      document.getElementById('stat-kosong').textContent = kosong;
+      document.getElementById('stat-durasi').textContent = Utils.formatDurasi(s.durasi, 'text');
+    }
+
+    /* ════════════════════════════════════════════════
+       TOGGLE KUNCI JAWABAN
+    ════════════════════════════════════════════════ */
+    function toggleKunci() {
+      const wrap = document.getElementById('kunci-wrap');
+      const btn  = document.getElementById('btn-toggle-kunci');
+
+      kunciTampil = !kunciTampil;
+
+      if (kunciTampil) {
+        wrap.classList.remove('hidden');
+        btn.textContent = '🔑 Sembunyikan Kunci';
+        renderKunci(filterAktif);
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        wrap.classList.add('hidden');
+        btn.textContent = '🔑 Lihat Kunci Jawaban';
+      }
+    }
+
+    /* ════════════════════════════════════════════════
+       FILTER KUNCI
+    ════════════════════════════════════════════════ */
+    function filterKunci(mode, el) {
+      filterAktif = mode;
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      renderKunci(mode);
+    }
+
+    /* ════════════════════════════════════════════════
+       RENDER KUNCI
+    ════════════════════════════════════════════════ */
+    function renderKunci(filter) {
+      const list = document.getElementById('kunci-list');
+      let detail = sesiData.detail;
+
+      if (filter === 'benar') detail = detail.filter(d =>  d.benar);
+      if (filter === 'salah') detail = detail.filter(d => !d.benar);
+
+      if (!detail.length) {
+        list.innerHTML = `
+          <div style="text-align:center; padding:48px; color:var(--gray-400)">
+            <div style="font-size:36px; margin-bottom:12px">🎉</div>
+            <p style="font-size:14px">
+              ${filter === 'salah'
+                ? 'Tidak ada jawaban yang salah. Luar biasa!'
+                : 'Tidak ada data untuk ditampilkan.'}
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = detail.map(d => renderItemKunci(d)).join('');
+    }
+
+    function renderItemKunci(d) {
+      const status     = d.benar ? 'benar' : 'salah';
+      const soalBersih = d.soalText.replace(/<[^>]+>/g, '');
+
+      // ── Header accordion ──
+      let html = `
+        <div class="item-kunci ${status}" id="ik-${d.no}">
+          <div class="ip-header" onclick="toggleItem(${d.no})">
+            <div class="ip-header-left">
+              <div class="ip-nomor">${d.no}</div>
+              <div class="ip-soal-preview">${soalBersih}</div>
+            </div>
+            <div class="ip-header-right">
+              <span class="result-pill ${status}">
+                ${d.benar ? '✓ Benar' : '✗ Salah'}
+              </span>
+              <span class="ip-toggle" id="toggle-icon-${d.no}">▼</span>
+            </div>
+          </div>
+          <div class="ip-body" id="ip-body-${d.no}">
+      `;
+
+      // ── Teks soal ──
+      html += `<div class="pb-soal-text">${d.soalText}</div>`;
+
+      // ── Info jawaban ──
+      if (!d.jawaban) {
+        html += `
+          <div class="pb-tidak-dijawab">
+            ⚠️ Soal ini tidak dijawab — jawaban benar adalah <strong>${d.kunci}</strong>
+          </div>
+        `;
+      } else if (!d.benar) {
+        html += `
+          <div class="pb-jawaban-info">
+            <span class="pb-jwb-chip kamu">✗ Jawabanmu: ${d.jawaban}</span>
+            <span class="pb-jwb-chip kunci">✓ Kunci: ${d.kunci}</span>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="pb-jawaban-info">
+            <span class="pb-jwb-chip benar">✓ Jawabanmu benar: ${d.jawaban}</span>
+          </div>
+        `;
+      }
+
+      // ── Opsi jawaban (highlight kunci & pilihan salah) ──
+      html += '<div class="pb-options">';
+      d.opsi.forEach(o => {
+        let cls  = 'normal';
+        let icon = '';
+
+        if (o.key === d.kunci) {
+          cls  = 'kunci';
+          icon = '✓';
+        } else if (o.key === d.jawaban && !d.benar) {
+          cls  = 'salah-pilih';
+          icon = '✗';
+        }
+
+        html += `
+          <div class="pb-opt ${cls}">
+            <div class="pok">${o.key}</div>
+            <div style="flex:1; line-height:1.5">${o.teks}</div>
+            ${icon ? `<div class="poi">${icon}</div>` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+
+      html += '</div></div>'; // tutup ip-body & item-kunci
+      return html;
+    }
+
+    /* ════════════════════════════════════════════════
+       TOGGLE ITEM (accordion)
+    ════════════════════════════════════════════════ */
+    function toggleItem(no) {
+      const body = document.getElementById('ip-body-' + no);
+      const icon = document.getElementById('toggle-icon-' + no);
+      body.classList.toggle('open');
+      icon.classList.toggle('open');
+    }
+
+    /* ════════════════════════════════════════════════
+       NAVIGASI
+    ════════════════════════════════════════════════ */
+    function keDashboard() {
+      window.location.href = 'dashboard-siswa.html';
+    }
+
+    function ulangiPaket() {
+      if (!sesiData) return;
+
+      // Map paketId → file soal
+      const fileMap = {
+        'to1-paket1': 'data/soal-to1-paket1.js',
+        'to1-paket2': 'data/soal-to1-paket2.js',
+        'to1-paket3': 'data/soal-to1-paket3.js'
+      };
+
+      const file = fileMap[sesiData.paketId];
+      if (!file) {
+        window.location.href = 'dashboard-siswa.html';
+        return;
+      }
+
+      PaketSession.simpan(sesiData.paketId, sesiData.paketLabel, '');
+      localStorage.setItem('osn_paket_file', file);
+      window.location.href = 'briefing.html';
+    }
+  </script>
+
+</body>
+</html>

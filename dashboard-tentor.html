@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Tentor — OSN Academy</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+
+    /* ── Greeting ── */
+    .tentor-banner {
+      background: linear-gradient(135deg, #0f1f3d 0%, #1a3260 60%, #0f2a50 100%);
+      border-radius: var(--radius-xl);
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tentor-banner::after {
+      content: '👨‍🏫';
+      position: absolute;
+      right: 40px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 72px;
+      opacity: 0.10;
+      pointer-events: none;
+    }
+
+    .tentor-banner h2 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .tentor-banner h2 span { color: var(--gold); }
+
+    .tentor-banner p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ── Grid statistik ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stats-grid .stat-card {
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+    }
+
+    .stats-grid .stat-card .stat-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .stats-grid .stat-card .stat-value {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .stats-grid .stat-card .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      margin-top: 6px;
+    }
+
+    .stats-grid .stat-card .stat-sub {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-top: 4px;
+    }
+
+    /* ── Grid dua kolom ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    /* ── Section card ── */
+    .section-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px 28px 24px;
+    }
+
+    .sc-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      color: var(--navy);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sc-title .sc-icon {
+      width: 30px; height: 30px;
+      background: var(--gold-pale);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── Chart wrapper ── */
+    .chart-wrap {
+      position: relative;
+      height: 220px;
+    }
+
+    /* ── Paket summary ── */
+    .paket-summary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .paket-summary-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+    }
+
+    .psi-level {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* Warna dot per paket */
+    .psi-level.paket1 { background: #2563eb; }
+    .psi-level.paket2 { background: var(--teal); }
+    .psi-level.paket3 { background: #7c3aed; }
+    .psi-level.default { background: var(--gray-400); }
+
+    .psi-label {
+      font-size: 13px;
+      color: var(--gray-800);
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .psi-sesi {
+      font-size: 12px;
+      color: var(--gray-400);
+      font-family: var(--font-mono);
+    }
+
+    .psi-skor {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      min-width: 44px;
+      text-align: right;
+    }
+
+    .psi-skor.tinggi { color: var(--success); }
+    .psi-skor.sedang { color: var(--warning); }
+    .psi-skor.rendah { color: var(--danger); }
+
+    /* ── Soal sering salah ── */
+    .galat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .galat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      background: var(--danger-bg);
+      border: 1px solid rgba(192,57,43,0.12);
+      border-radius: var(--radius-md);
+    }
+
+    .galat-rank {
+      width: 26px; height: 26px;
+      background: var(--danger);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+    }
+
+    .galat-info { flex: 1; }
+
+    .galat-info .gi-paket {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-bottom: 2px;
+    }
+
+    .galat-info .gi-nomor {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .galat-count {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    /* ── Bloom bars ── */
+    .bloom-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bloom-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bloom-bar-item .bbi-label {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--navy);
+      min-width: 28px;
+    }
+
+    .bloom-bar-wrap {
+      flex: 1;
+      background: var(--gray-200);
+      border-radius: 99px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .bloom-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+
+    .bloom-bar-item .bbi-pct {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--gray-600);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    /* ── Riwayat tabel ── */
+    .riwayat-section { margin-bottom: 40px; }
+
+    .riwayat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .riwayat-header .rh-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .skor-chip {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      min-width: 48px;
+      text-align: center;
+    }
+
+    .skor-chip.tinggi { background: var(--success-bg); color: var(--success); }
+    .skor-chip.mid    { background: var(--warning-bg); color: var(--warning); }
+    .skor-chip.rendah { background: var(--danger-bg);  color: var(--danger); }
+
+    .btn-lihat-detail {
+      background: none;
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-family: var(--font-body);
+      color: var(--navy-mid);
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn-lihat-detail:hover {
+      background: var(--navy);
+      color: var(--white);
+      border-color: var(--navy);
+    }
+
+    .btn-reset {
+      background: var(--danger-bg);
+      border: 1px solid rgba(192,57,43,0.2);
+      border-radius: var(--radius-sm);
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: var(--font-body);
+      color: var(--danger);
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn-reset:hover {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 56px 32px;
+      color: var(--gray-400);
+      background: var(--white);
+      border: 1px dashed var(--border-mid);
+      border-radius: var(--radius-xl);
+    }
+
+    .empty-state .es-icon { font-size: 48px; margin-bottom: 14px; opacity: 0.5; }
+    .empty-state p { font-size: 14px; line-height: 1.6; }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .two-col    { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .tentor-banner { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon">🗺️</div>
+      <h1>OSN <span>Academy</span></h1>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <span class="user-name" id="topbar-nama">—</span>
+        <span class="user-role" id="topbar-role">Tentor</span>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Keluar</button>
+    </div>
+  </nav>
+
+  <div class="main-wrap wide">
+
+    <!-- Banner -->
+    <div class="tentor-banner anim-fade-up">
+      <div>
+        <h2>Dashboard <span>Tentor</span></h2>
+        <p>Monitor perkembangan try out siswa secara detail.</p>
+      </div>
+    </div>
+
+    <!-- Statistik -->
+    <div class="stats-grid anim-fade-up anim-delay-1" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📋</div>
+        <div class="stat-value" id="s-total-sesi">0</div>
+        <div class="stat-label">Total Sesi</div>
+        <div class="stat-sub">semua try out</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-value" id="s-rata">—</div>
+        <div class="stat-label">Rata-rata Skor</div>
+        <div class="stat-sub" id="s-rata-sub">dari semua sesi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-value" id="s-tertinggi">—</div>
+        <div class="stat-label">Skor Tertinggi</div>
+        <div class="stat-sub" id="s-tertinggi-sub">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-value" id="s-tren">—</div>
+        <div class="stat-label">Tren Terakhir</div>
+        <div class="stat-sub" id="s-tren-sub">3 sesi terakhir</div>
+      </div>
+    </div>
+
+    <!-- Grafik + Ringkasan Paket -->
+    <div class="two-col anim-fade-up anim-delay-2">
+
+      <!-- Grafik skor -->
+      <div class="section-card">
+        <div class="sc-title">
+          <div class="sc-icon">📈</div>
+          Grafik Progress Skor
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chart-progress"></canvas>
+        </div>
+      </div>
+
+      <!-- Ringkasan per paket -->
+      <div class="section-card">
+        <div class="sc-title">
+          <div class="sc-icon">🎯</div>
+          Ringkasan Per Paket
+        </div>
+        <div class="paket-summary-list" id="paket-summary-list">
+          <!-- JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Akurasi Bloom + Soal sering salah -->
+    <div class="two-col anim-fade-up anim-delay-3">
+
+      <div class="section-card">
+        <div class="sc-title">
+          <div class="sc-icon">🧠</div>
+          Akurasi per Level Bloom
+        </div>
+        <div class="bloom-bars" id="bloom-bars">
+          <!-- JS -->
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="sc-title">
+          <div class="sc-icon">⚠️</div>
+          Soal Paling Sering Salah
+        </div>
+        <div class="galat-list" id="galat-list">
+          <!-- JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Riwayat lengkap -->
+    <div class="riwayat-section anim-fade-up anim-delay-4">
+      <div class="riwayat-header">
+        <div class="rh-title">
+          <span>📋</span> Riwayat Semua Sesi
+        </div>
+        <button class="btn-reset" onclick="resetData()">
+          🗑 Reset Data
+        </button>
+      </div>
+      <div id="riwayat-container">
+        <!-- JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <script src="assets/app.js"></script>
+  <script>
+    let chartInstance = null;
+
+    /* ════════════════════════════════════════════════
+       INIT
+    ════════════════════════════════════════════════ */
+    (function init() {
+      const session = Auth.requireLogin('tentor');
+      if (!session) return;
+      Utils.isiTopbar(session);
+
+      const riwayat = Riwayat.getAll();
+      const stat    = Utils.hitungStatistik(riwayat);
+
+      renderStatCards(riwayat, stat);
+      renderGrafik(riwayat);
+      renderPaketSummary(stat);
+      renderBloomBars(riwayat);
+      renderGalatList(stat);
+      renderRiwayat(riwayat);
+    })();
+
+    /* ════════════════════════════════════════════════
+       STAT CARDS
+    ════════════════════════════════════════════════ */
+    function renderStatCards(riwayat, stat) {
+      document.getElementById('s-total-sesi').textContent = riwayat.length;
+
+      if (!stat) return;
+
+      document.getElementById('s-rata').textContent      = stat.rataRata;
+      document.getElementById('s-tertinggi').textContent = stat.skorTinggi;
+
+      // Skor tertinggi — dari paket mana
+      const best = riwayat.find(s => s.skor === stat.skorTinggi);
+      if (best) {
+        document.getElementById('s-tertinggi-sub').textContent = best.paketLabel;
+      }
+
+      // Tren: rata-rata 3 sesi terakhir vs 3 sebelumnya
+      if (riwayat.length >= 2) {
+        const last3  = riwayat.slice(-3);
+        const avg3   = Math.round(last3.reduce((a, s) => a + s.skor, 0) / last3.length);
+        const prev3  = riwayat.slice(-6, -3);
+        const trenEl = document.getElementById('s-tren');
+
+        if (prev3.length) {
+          const avgP = Math.round(prev3.reduce((a, s) => a + s.skor, 0) / prev3.length);
+          const diff = avg3 - avgP;
+          trenEl.textContent = (diff >= 0 ? '+' : '') + diff;
+          trenEl.style.color = diff >= 0 ? 'var(--success)' : 'var(--danger)';
+          document.getElementById('s-tren-sub').textContent =
+            `vs 3 sesi sebelumnya (avg ${avgP})`;
+        } else {
+          trenEl.textContent = avg3;
+          document.getElementById('s-tren-sub').textContent = 'rata-rata 3 sesi terakhir';
+        }
+      }
+    }
+
+    /* ════════════════════════════════════════════════
+       GRAFIK PROGRESS
+    ════════════════════════════════════════════════ */
+    function renderGrafik(riwayat) {
+      const canvas = document.getElementById('chart-progress');
+
+      if (!riwayat.length) {
+        canvas.parentElement.innerHTML =
+          '<div style="display:flex;align-items:center;justify-content:center;height:220px;color:var(--gray-400);font-size:13px">Belum ada data</div>';
+        return;
+      }
+
+      // Label singkat: hapus prefix "Try Out #X — " jika ada
+      const labels = riwayat.map((s, i) => {
+        const singkat = s.paketLabel.replace(/^Try Out #\d+ — /, '');
+        return `#${i + 1} ${singkat}`;
+      });
+      const scores = riwayat.map(s => s.skor);
+
+      const dotColors = scores.map(s =>
+        s >= 80 ? '#1e7e4e' : s >= 60 ? '#b7770d' : '#c0392b'
+      );
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Skor',
+            data: scores,
+            borderColor: '#1a7f74',
+            backgroundColor: 'rgba(26,127,116,0.08)',
+            borderWidth: 2.5,
+            pointBackgroundColor: dotColors,
+            pointBorderColor: dotColors,
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            tension: 0.35,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` Skor: ${ctx.parsed.y}`,
+                afterLabel: ctx => {
+                  const s = riwayat[ctx.dataIndex];
+                  return [
+                    ` Benar: ${s.benar} / ${s.totalSoal}`,
+                    ` Durasi: ${Utils.formatDurasi(s.durasi, 'text')}`
+                  ];
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 0, max: 100,
+              grid: { color: 'rgba(0,0,0,0.05)' },
+              ticks: {
+                font: { family: 'JetBrains Mono', size: 11 },
+                color: '#9a9aaa'
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: {
+                font: { size: 10 },
+                color: '#9a9aaa',
+                maxRotation: 30
+              }
+            }
+          }
+        }
+      });
+    }
+
+    /* ════════════════════════════════════════════════
+       PAKET SUMMARY
+    ════════════════════════════════════════════════ */
+    function renderPaketSummary(stat) {
+      const el = document.getElementById('paket-summary-list');
+
+      if (!stat || !Object.keys(stat.perPaket).length) {
+        el.innerHTML = '<div style="color:var(--gray-400);font-size:13px;text-align:center;padding:20px">Belum ada data</div>';
+        return;
+      }
+
+      // Tentukan class warna dot berdasarkan paketId
+      function dotClass(id) {
+        if (id.includes('paket1')) return 'paket1';
+        if (id.includes('paket2')) return 'paket2';
+        if (id.includes('paket3')) return 'paket3';
+        return 'default';
+      }
+
+      el.innerHTML = Object.entries(stat.perPaket)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([id, data]) => {
+          const avgSkor = Math.round(data.skor.reduce((a, b) => a + b, 0) / data.skor.length);
+          const chipCls = avgSkor >= 80 ? 'tinggi' : avgSkor >= 60 ? 'sedang' : 'rendah';
+          const dot     = dotClass(id);
+          return `
+            <div class="paket-summary-item">
+              <div class="psi-level ${dot}"></div>
+              <div class="psi-label">${data.label}</div>
+              <div class="psi-sesi">${data.sesi.length}×</div>
+              <div class="psi-skor ${chipCls}">${avgSkor}</div>
+            </div>
+          `;
+        }).join('');
+    }
+
+    /* ════════════════════════════════════════════════
+       BLOOM BARS
+    ════════════════════════════════════════════════ */
+    function renderBloomBars(riwayat) {
+      const el = document.getElementById('bloom-bars');
+
+      if (!riwayat.length) {
+        el.innerHTML = '<div style="color:var(--gray-400);font-size:13px;text-align:center;padding:20px">Belum ada data</div>';
+        return;
+      }
+
+      const bloomData = {};
+      riwayat.forEach(sesi => {
+        sesi.detail.forEach(d => {
+          const lvl = d.level || 'C?';
+          if (!bloomData[lvl]) bloomData[lvl] = { benar: 0, total: 0 };
+          bloomData[lvl].total++;
+          if (d.benar) bloomData[lvl].benar++;
+        });
+      });
+
+      const warna = {
+        C1: '#1e7e4e', C2: '#22a898',
+        C3: '#b7770d', C4: '#e8a020',
+        C5: '#c0392b', C6: '#8e44ad'
+      };
+
+      const sorted = Object.entries(bloomData).sort((a, b) => a[0].localeCompare(b[0]));
+
+      el.innerHTML = sorted.map(([lvl, data]) => {
+        const pct    = Math.round((data.benar / data.total) * 100);
+        const warna_ = warna[lvl] || 'var(--teal)';
+        return `
+          <div class="bloom-bar-item">
+            <div class="bbi-label">${lvl}</div>
+            <div class="bloom-bar-wrap">
+              <div class="bloom-bar-fill" style="width:${pct}%; background:${warna_}"></div>
+            </div>
+            <div class="bbi-pct">${pct}%</div>
+          </div>
+          <div style="font-size:11px;color:var(--gray-400);margin-top:-6px;padding-left:38px;margin-bottom:4px">
+            ${data.benar} benar dari ${data.total} soal
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* ════════════════════════════════════════════════
+       SOAL SERING SALAH
+    ════════════════════════════════════════════════ */
+    function renderGalatList(stat) {
+      const el = document.getElementById('galat-list');
+
+      if (!stat || !stat.seringGalat.length) {
+        el.innerHTML = `
+          <div style="text-align:center;padding:28px;color:var(--gray-400)">
+            <div style="font-size:32px;margin-bottom:8px">🎉</div>
+            <div style="font-size:13px">Belum ada data soal yang sering salah</div>
+          </div>
+        `;
+        return;
+      }
+
+      el.innerHTML = stat.seringGalat.map((item, i) => `
+        <div class="galat-item">
+          <div class="galat-rank">${i + 1}</div>
+          <div class="galat-info">
+            <div class="gi-paket">${item.paket}</div>
+            <div class="gi-nomor">Soal No. ${item.no}</div>
+          </div>
+          <div class="galat-count">${item.count}× salah</div>
+        </div>
+      `).join('');
+    }
+
+    /* ════════════════════════════════════════════════
+       RIWAYAT TABEL
+    ════════════════════════════════════════════════ */
+    function renderRiwayat(riwayat) {
+      const container = document.getElementById('riwayat-container');
+      const sorted    = riwayat.slice().reverse();
+
+      if (!sorted.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="es-icon">📭</div>
+            <p>Siswa belum mengerjakan try out apapun.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tanggal &amp; Waktu</th>
+                <th>Paket Soal</th>
+                <th>Skor</th>
+                <th>Benar / Salah</th>
+                <th>Durasi</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sorted.map((s, i) => {
+                const chipCls = s.skor >= 80 ? 'tinggi' : s.skor >= 60 ? 'mid' : 'rendah';
+                return `
+                  <tr>
+                    <td style="font-family:var(--font-mono);color:var(--gray-400);font-size:12px">
+                      ${sorted.length - i}
+                    </td>
+                    <td style="font-size:13px;color:var(--gray-600)">
+                      ${Utils.formatTanggal(s.tanggal)}
+                    </td>
+                    <td>
+                      <div style="font-weight:600;font-size:14px">${s.paketLabel}</div>
+                    </td>
+                    <td>
+                      <span class="skor-chip ${chipCls}">${s.skor}</span>
+                    </td>
+                    <td style="font-size:13px">
+                      <span style="color:var(--success);font-weight:600">${s.benar}✓</span>
+                      &nbsp;/&nbsp;
+                      <span style="color:var(--danger);font-weight:600">${s.salah}✗</span>
+                    </td>
+                    <td style="font-size:13px;font-family:var(--font-mono);color:var(--gray-600)">
+                      ${Utils.formatDurasi(s.durasi, 'text')}
+                    </td>
+                    <td>
+                      <button class="btn-lihat-detail" onclick="lihatDetail('${s.id}')">
+                        Detail →
+                      </button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    /* ════════════════════════════════════════════════
+       LIHAT DETAIL & RESET
+    ════════════════════════════════════════════════ */
+    function lihatDetail(sesiId) {
+      localStorage.setItem('osn_detail_sesi_id', sesiId);
+      window.location.href = 'detail-sesi.html?id=' + sesiId;
+    }
+
+    function resetData() {
+      if (confirm('Reset semua data try out siswa? Tindakan ini tidak dapat dibatalkan.')) {
+        Riwayat.reset();
+        location.reload();
+      }
+    }
+  </script>
+
+</body>
+</html>

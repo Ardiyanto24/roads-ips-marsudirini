@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Siap Mengerjakan — OSN Academy</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    body {
+      background: var(--cream);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .briefing-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .briefing-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 52px 56px;
+      max-width: 580px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    /* ── Header ── */
+    .briefing-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      display: block;
+      animation: bounce 1.5s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .briefing-card h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--navy);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .briefing-card .paket-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--teal);
+      background: var(--teal-pale);
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 32px;
+    }
+
+    /* ── Info grid ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .info-item {
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      padding: 16px 12px;
+    }
+
+    .info-item .ii-icon {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .info-item .ii-value {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .info-item .ii-label {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-top: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Kotak tema — teks lebih kecil agar muat */
+    .info-item .ii-value.ii-tema {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    /* ── Aturan ── */
+    .rules-box {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      text-align: left;
+      margin-bottom: 32px;
+    }
+
+    .rules-box .rules-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--navy-mid);
+      margin-bottom: 14px;
+    }
+
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rules-list .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+
+    .rules-list .rule-icon {
+      width: 22px;
+      height: 22px;
+      background: var(--navy);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Tombol ── */
+    .briefing-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-mulai {
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 17px 40px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      letter-spacing: 0.3px;
+    }
+
+    .btn-mulai:hover {
+      background: var(--teal-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(26,127,116,0.35);
+    }
+
+    .btn-mulai:active { transform: translateY(0); }
+
+    .btn-kembali {
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      font-family: var(--font-body);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-kembali:hover { color: var(--navy); }
+
+    /* ── Countdown overlay ── */
+    .countdown-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      display: none;
+    }
+
+    .countdown-overlay.show { display: flex; }
+
+    .countdown-overlay p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .countdown-number {
+      font-family: var(--font-display);
+      font-size: 120px;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      animation: popIn 0.4s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(1.4); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .countdown-overlay .cd-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.35);
+      margin-top: 24px;
+    }
+
+    @media (max-width: 600px) {
+      .briefing-card { padding: 36px 24px; }
+      .info-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .info-item .ii-value { font-size: 18px; }
+      .info-item .ii-value.ii-tema { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon">🗺️</div>
+      <h1>OSN <span>Academy</span></h1>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <span class="user-name" id="topbar-nama">—</span>
+        <span class="user-role" id="topbar-role">Siswa</span>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Keluar</button>
+    </div>
+  </nav>
+
+  <!-- Briefing -->
+  <div class="briefing-wrap">
+    <div class="briefing-card">
+
+      <span class="briefing-icon">📋</span>
+      <h2>Siap Mengerjakan?</h2>
+      <div class="paket-label" id="paket-label">— Memuat paket —</div>
+
+      <!-- Info grid -->
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="ii-icon">📝</div>
+          <div class="ii-value" id="info-soal">10</div>
+          <div class="ii-label">Soal</div>
+        </div>
+        <div class="info-item">
+          <div class="ii-icon">⏱️</div>
+          <div class="ii-value" id="info-waktu">20</div>
+          <div class="ii-label">Menit</div>
+        </div>
+        <div class="info-item">
+          <div class="ii-icon">📂</div>
+          <div class="ii-value ii-tema" id="info-tema">—</div>
+          <div class="ii-label">Kelompok</div>
+        </div>
+      </div>
+
+      <!-- Aturan -->
+      <div class="rules-box">
+        <div class="rules-title">📌 Perhatikan sebelum mulai</div>
+        <div class="rules-list">
+          <div class="rule-item">
+            <div class="rule-icon">⏱</div>
+            <span>Timer akan berjalan otomatis saat kamu menekan tombol <strong>Mulai</strong>. Waktu tidak bisa dijeda.</span>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">📋</div>
+            <span>Kamu bisa berpindah soal kapan saja menggunakan navigasi di sidebar kiri.</span>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">✏️</div>
+            <span>Jawaban bisa diubah selama waktu masih berjalan. Pastikan semua soal sudah dijawab sebelum mengakhiri.</span>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">⚠️</div>
+            <span>Jika waktu habis, soal akan dikumpulkan otomatis dengan jawaban yang sudah kamu isi.</span>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">📊</div>
+            <span>Setelah selesai, kamu dapat melihat skor dan kunci jawaban untuk setiap soal.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tombol -->
+      <div class="briefing-actions">
+        <button class="btn-mulai" onclick="mulaiHitung()">
+          Mulai Mengerjakan →
+        </button>
+        <button class="btn-kembali" onclick="kembali()">
+          ← Kembali ke Dashboard
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Countdown overlay -->
+  <div class="countdown-overlay" id="countdown-overlay">
+    <p>Bersiap...</p>
+    <div class="countdown-number" id="countdown-num">3</div>
+    <div class="cd-sub">Jangan tutup halaman ini</div>
+  </div>
+
+  <script src="assets/app.js"></script>
+  <script>
+    // ── Init ────────────────────────────────────────────────
+    (function init() {
+      const session = Auth.requireLogin('siswa');
+      if (!session) return;
+
+      Utils.isiTopbar(session);
+
+      // Ambil paket yang dipilih
+      const paket = PaketSession.get();
+      if (!paket) {
+        window.location.href = 'dashboard-siswa.html';
+        return;
+      }
+
+      // Isi info
+      document.getElementById('paket-label').textContent = paket.paketLabel;
+      document.getElementById('info-tema').textContent   = paket.tema || '—';
+    })();
+
+    // ── Kembali ─────────────────────────────────────────────
+    function kembali() {
+      PaketSession.hapus();
+      window.location.href = 'dashboard-siswa.html';
+    }
+
+    // ── Mulai countdown lalu masuk quiz ─────────────────────
+    function mulaiHitung() {
+      const overlay = document.getElementById('countdown-overlay');
+      const numEl   = document.getElementById('countdown-num');
+
+      overlay.classList.add('show');
+
+      let count = 3;
+      numEl.textContent = count;
+
+      const interval = setInterval(() => {
+        count--;
+
+        if (count <= 0) {
+          clearInterval(interval);
+          numEl.textContent = 'GO!';
+          numEl.style.color = 'var(--teal-light)';
+
+          setTimeout(() => {
+            window.location.href = 'quiz.html';
+          }, 600);
+          return;
+        }
+
+        // Animasi ulang
+        numEl.style.animation = 'none';
+        numEl.offsetHeight; // reflow
+        numEl.style.animation = 'popIn 0.4s ease';
+        numEl.textContent = count;
+
+        // Warna berubah saat mendekati 0
+        if (count === 1) numEl.style.color = 'var(--danger)';
+        else if (count === 2) numEl.style.color = 'var(--warning)';
+        else numEl.style.color = 'var(--gold)';
+
+      }, 1000);
+    }
+  </script>
+
+</body>
+</html>
